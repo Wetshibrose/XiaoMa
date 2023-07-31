@@ -1,14 +1,17 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:xiaoma/app/app.dart';
 // xiaoma imports
 import 'package:xiaoma/auth/auth.dart';
-import 'package:xiaoma/constants/constants.dart';
+import 'package:xiaoma/app/constants/constants.dart';
 import 'package:xiaoma/dashboard/screens/dashboard_screen.dart';
 import 'package:xiaoma/mixins/mixins.dart';
-import 'package:xiaoma/themes/themes.dart';
+import 'package:xiaoma/app/themes/themes.dart';
 import 'package:xiaoma/utils/utils.dart';
 import 'package:xiaoma/widgets/widgets.dart';
 
@@ -22,7 +25,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
   // stores
-  final LoginScreenStore _loginScreenStore = locator<LoginScreenStore>();
+  final _loginScreenStore = locator<LoginScreenStore>();
+  final _sharedPreferencesRepo = locator<SharedPreferencesRepo>();
   // keys
   final _formKey = GlobalKey<FormState>();
   // utils
@@ -39,19 +43,23 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
+    final _theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: XiamaColors.white,
+      backgroundColor: AppColors.white,
       body: Container(
         padding: const EdgeInsets.only(
-          left: XiamaConst.XIAMA_SCREEN_PADDING,
-          right: XiamaConst.XIAMA_SCREEN_PADDING,
+          left: AppConstants.XIAMA_SCREEN_PADDING,
+          right: AppConstants.XIAMA_SCREEN_PADDING,
         ),
-        constraints: BoxConstraints(
-          minHeight: _size.height,
-        ),
+        height: _size.height,
+        // constraints: BoxConstraints(
+        //   minHeight: _size.height,
+        //   maxHeight: _size
+        // ),
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Column(
+            // mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
                 height: _size.height * .1,
@@ -70,15 +78,15 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                 },
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
               ),
               Center(
                 child: Image.asset(
-                  XiamaConst.AUTH_VALIDATE_IMAGE,
+                  AppConstants.AUTH_VALIDATE_IMAGE,
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
               ),
               Form(
                 key: _formKey,
@@ -93,14 +101,14 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                       ),
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                      height: AppConstants.SIZEBOX_PADDING_MD,
                     ),
                     CustomTextFormField(
                       hasPrefixIcon: true,
                       keyboardType: TextInputType.phone,
                       prefixIcon: const Icon(
                         CupertinoIcons.phone,
-                        color: XiamaColors.grey3,
+                        color: AppColors.grey3,
                       ),
                       hasPrefixText: true,
                       hintText: "0712345678",
@@ -113,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                       validator: validatePhoneNumber,
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XL,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XL,
                     ),
                     Observer(
                       builder: (_) {
@@ -130,14 +138,14 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                                 ),
                               ),
                               const SizedBox(
-                                height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                                height: AppConstants.SIZEBOX_PADDING_MD,
                               ),
                               CustomTextFormField(
                                 hasPrefixIcon: true,
                                 showPassword: _loginScreenStore.obscureText,
                                 prefixIcon: const Icon(
                                   CupertinoIcons.padlock,
-                                  color: XiamaColors.grey3,
+                                  color: AppColors.grey3,
                                 ),
                                 hintText: "Minimum 8 characters",
                                 suffixIcon: _loginScreenStore.obscureText
@@ -148,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                                         },
                                         icon: const Icon(
                                           CupertinoIcons.eye_slash,
-                                          color: XiamaColors.grey3,
+                                          color: AppColors.grey3,
                                         ),
                                       )
                                     : IconButton(
@@ -158,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                                         },
                                         icon: const Icon(
                                           CupertinoIcons.eye,
-                                          color: XiamaColors.grey3,
+                                          color: AppColors.grey3,
                                         ),
                                       ),
                                 onSaved: (newValue) {
@@ -170,14 +178,15 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                                 validator: validatePassword,
                               ),
                               const SizedBox(
-                                height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                                height: AppConstants.SIZEBOX_PADDING_MD,
                               ),
                               Align(
                                 alignment: Alignment.centerRight,
                                 child: TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pushNamed(
-                                        ForgotPasswordScreen.routeName);
+                                      ForgotPasswordScreen.routeName,
+                                    );
                                   },
                                   child: const Text("Forgot Password ?"),
                                 ),
@@ -190,9 +199,13 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                   ],
                 ),
               ),
-              SizedBox(
-                height: _size.height * .08,
-              ),
+              _loginScreenStore.phoneNumberIsValid
+                  ? SizedBox(
+                      height: _size.height * .06,
+                    )
+                  : SizedBox(
+                      height: _size.height * .15,
+                    ),
               Observer(
                 builder: (_) {
                   return CustomElevatedButton(
@@ -246,9 +259,14 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                         );
                         return;
                       }
-
-                      Navigator.of(context)
-                          .pushNamed(DashboardScreen.routeName);
+                      await _sharedPreferencesRepo.setIsAuthenticated(
+                        value: true,
+                      );
+                      if (!mounted) return;
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        DashboardScreen.routeName,
+                        (route) => false,
+                      );
                       CustomToast.showToast(
                         context: context,
                         message: "Logged in successfully",
@@ -258,11 +276,9 @@ class _LoginScreenState extends State<LoginScreen> with ValidationMixins {
                     },
                     child: _loginScreenStore.isAuthenticating
                         ? MiniWidgets.circularProgressIndicatorOnButton()
-                        : const Text(
+                        : Text(
                             "Login",
-                            style: TextStyle(
-                              color: XiamaColors.black1,
-                            ),
+                            style: _theme.textTheme.bodyMedium,
                           ),
                   );
                 },
