@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:xiaoma/app/app.dart';
 import 'package:xiaoma/auth/screens/screens.dart';
 import 'package:xiaoma/auth/stores/stores.dart';
-import 'package:xiaoma/constants/constants.dart';
-import 'package:xiaoma/home/home.dart';
 import 'package:xiaoma/mixins/mixins.dart';
-import 'package:xiaoma/themes/themes.dart';
 import 'package:xiaoma/utils/utils.dart';
 import 'package:xiaoma/widgets/widgets.dart';
 
@@ -24,9 +22,9 @@ class _RegistrationScreenState extends State<RegistrationScreen>
   final _formKey = GlobalKey<FormState>();
 
   // stores
-  final LoginScreenStore _loginScreenStore = locator<LoginScreenStore>();
-  final RegistrationScreenStore _registrationScreenStore =
-      locator<RegistrationScreenStore>();
+  final _loginScreenStore = locator<LoginScreenStore>();
+  final _registrationScreenStore = locator<RegistrationScreenStore>();
+  final _sharedPreferencesRepo = locator<SharedPreferencesRepo>();
 
   @override
   void initState() {
@@ -39,8 +37,8 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.only(
-          left: XiamaConst.XIAMA_SCREEN_PADDING,
-          right: XiamaConst.XIAMA_SCREEN_PADDING,
+          left: AppConstants.XIAMA_SCREEN_PADDING,
+          right: AppConstants.XIAMA_SCREEN_PADDING,
         ),
         height: _size.height,
         constraints: BoxConstraints(
@@ -67,7 +65,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       ),
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
                     ),
                     const Text(
                       "Full Name",
@@ -77,7 +75,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       ),
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                      height: AppConstants.SIZEBOX_PADDING_MD,
                     ),
                     Observer(
                       builder: (context) {
@@ -98,7 +96,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       },
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XL,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XL,
                     ),
                     const Text(
                       "Phone Number",
@@ -108,7 +106,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       ),
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                      height: AppConstants.SIZEBOX_PADDING_MD,
                     ),
                     Observer(
                       builder: (_) {
@@ -117,7 +115,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                           prefixText: "+254",
                           prefixIcon: const Icon(
                             CupertinoIcons.phone,
-                            color: XiamaColors.grey3,
+                            color: AppColors.grey3,
                           ),
                           initialValue: _loginScreenStore.phoneNumber,
                           onSaved: (newValue) {
@@ -131,7 +129,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       },
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XL,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XL,
                     ),
                     const Text(
                       "Choose password",
@@ -141,7 +139,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       ),
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                      height: AppConstants.SIZEBOX_PADDING_MD,
                     ),
                     Observer(
                       builder: (_) {
@@ -150,7 +148,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                           showPassword: _registrationScreenStore.obscureText,
                           prefixIcon: const Icon(
                             CupertinoIcons.padlock,
-                            color: XiamaColors.grey3,
+                            color: AppColors.grey3,
                           ),
                           hintText: "Minimum 8 characters",
                           suffixIcon:
@@ -185,7 +183,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       },
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XL,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XL,
                     ),
                     const Text(
                       "Confirm Password",
@@ -195,7 +193,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       ),
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                      height: AppConstants.SIZEBOX_PADDING_MD,
                     ),
                     Observer(
                       builder: (_) {
@@ -241,54 +239,68 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       },
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        SignUpDivider(),
+                      children: [
+                        const SignUpDivider(),
                         Expanded(
-                          child: Center(
-                            child: Text(
-                              "or continue with",
-                              style: TextStyle(
-                                color: XiamaColors.black1,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                          child: Column(
+                            children: const [
+                              Center(
+                                child: Text(
+                                  "or",
+                                  style: TextStyle(
+                                    color: AppColors.black1,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Center(
+                                child: Text(
+                                  " continue with",
+                                  style: TextStyle(
+                                    color: AppColors.black1,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SignUpDivider(),
+                        const SignUpDivider(),
                       ],
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
                     ),
                     Observer(
                       builder: (_) {
                         return CustomElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: XiamaColors.white,
+                            backgroundColor: AppColors.white,
                             side: const BorderSide(
-                              color: XiamaColors.grey2,
+                              color: AppColors.grey2,
                             ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                XiamaConst.AUTH_REGISTRATION_GOOGLE,
+                                AppConstants.AUTH_REGISTRATION_GOOGLE,
                                 height: 20,
                               ),
                               const SizedBox(
-                                width: XiamaConst.XIAMA_SIZEBOX_PADDING_L,
+                                width: AppConstants.SIZEBOX_PADDING_L,
                               ),
                               const Text(
                                 "Sign Up with Google",
                                 style: TextStyle(
-                                  color: XiamaColors.black2,
+                                  color: AppColors.black2,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -299,7 +311,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                       },
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                      height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
                     ),
                     Observer(
                       builder: (_) {
@@ -348,7 +360,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                               : const Text(
                                   "Get Started",
                                   style: TextStyle(
-                                    color: XiamaColors.black1,
+                                    color: AppColors.black1,
                                   ),
                                 ),
                         );
@@ -362,7 +374,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
                 text: const TextSpan(
                   text: "By lobby the button above, you agree to our",
                   style: TextStyle(
-                    color: XiamaColors.grey2,
+                    color: AppColors.grey2,
                   ),
                   children: [
                     TextSpan(text: "Terms of Service "),
@@ -390,7 +402,7 @@ class SignUpDivider extends StatelessWidget {
         height: 1.5,
         width: 20,
         decoration: const BoxDecoration(
-          color: XiamaColors.grey2,
+          color: AppColors.grey2,
           borderRadius: BorderRadius.all(
             Radius.circular(10),
           ),
