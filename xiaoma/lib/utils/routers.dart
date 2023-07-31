@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:xiaoma/account/account.dart';
 import 'package:xiaoma/auth/auth.dart';
-import 'package:xiaoma/dashboard/screens/dashboard_screen.dart';
+import 'package:xiaoma/chat/chat.dart';
+import 'package:xiaoma/dashboard/dashboard.dart';
 import 'package:xiaoma/home/home.dart';
 import 'package:xiaoma/onboarding/onboarding.dart';
 import 'package:xiaoma/profile/profile.dart';
+import 'package:xiaoma/settings/settings.dart';
 
 Route? handleRoutes(RouteSettings settings) {
   switch (settings.name) {
@@ -76,14 +79,55 @@ Route? handleRoutes(RouteSettings settings) {
         },
       );
 
-      // Profile
-      case PromoCodeScreen.routeName:
+    // Profile
+    case PromoCodeScreen.routeName:
       return CupertinoPageRoute(
         builder: (context) {
           return const PromoCodeScreen();
         },
       );
 
+    case ProfileScreen.routeName:
+      return CupertinoPageRoute(
+        builder: (context) {
+          return const ProfileScreen();
+        },
+      );
+
+      case AboutScreen.routeName:
+      return CupertinoPageRoute(
+        builder: (context) {
+          return const AboutScreen();
+        },
+      );
+
+      case SettingsScreen.routeName:
+      return CupertinoPageRoute(
+        builder: (context) {
+          return const SettingsScreen();
+        },
+      );
+
+    case ChatScreen.routeName:
+      return CupertinoPageRoute(
+        builder: (context) {
+          return const ChatScreen();
+        },
+      );
+
+    case CancelRideScreen.routeName:
+      return CupertinoPageRoute(
+        builder: (context) {
+          return const CancelRideScreen();
+        },
+      );
+
+      case AccountScreen.routeName:
+      return CupertinoPageRoute(
+        builder: (context) {
+          return const AccountScreen();
+        },
+      );
     default:
       break;
   }

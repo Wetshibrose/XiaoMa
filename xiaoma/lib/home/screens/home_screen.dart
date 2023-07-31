@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:xiaoma/constants/constants.dart';
+import 'package:xiaoma/chat/chat.dart';
+import 'package:xiaoma/app/constants/constants.dart';
 import 'package:xiaoma/home/home.dart';
 import 'package:xiaoma/map/models/models.dart';
 import 'package:xiaoma/map/screens/map_screen.dart';
 import 'package:xiaoma/map/stores/map_screen_store.dart';
-import 'package:xiaoma/themes/themes.dart';
+import 'package:xiaoma/profile/profile.dart';
+import 'package:xiaoma/app/themes/themes.dart';
 import 'package:xiaoma/utils/utils.dart';
 import 'package:xiaoma/widgets/widgets.dart';
 
@@ -25,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   //state
   bool ordered = false;
+  bool isConfirmOrder = false;
+  bool isDriverWaiting = false;
 
   @override
   void initState() {
@@ -65,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               children: [
                 PhysicalModel(
-                  color: XiamaColors.grey2,
+                  color: AppColors.grey2,
                   elevation: 10,
                   shape: BoxShape.circle,
                   child: Material(
@@ -74,70 +78,152 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () async {
                         _mapScreenStore.resetFields();
                         await mapSearchBottomSheet(
-                            context: context,
-                            size: _size,
-                            onDestinationPlaceTap: (place) {
-                              final _mapScreenStore = locator<MapScreenStore>();
-                              _mapScreenStore.handleSelectedDestinationPlace(
-                                  value: place);
-                              _mapScreenStore.predictedPlaces.clear();
-                              XiamaLogger.debugPrint(
-                                  "selected destination ${_mapScreenStore.selectedDestinationPlace}");
-                              if (_mapScreenStore.selectedDestinationPlace !=
-                                      null &&
-                                  _mapScreenStore.selectedSourcePlace != null) {
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  ordered = true;
-                                });
-                              }
-                            },
-                            onSavedPlaceTap: (place) {},
-                            onSourcePlaceTap: (place) {
-                              final _mapScreenStore = locator<MapScreenStore>();
-                              _mapScreenStore.handleSelectedSourcePlace(
-                                  value: place);
-                              _mapScreenStore.predictedPlaces.clear();
-                              XiamaLogger.debugPrint(
-                                  "selected source ${_mapScreenStore.selectedSourcePlace}");
-                              if (_mapScreenStore.selectedDestinationPlace !=
-                                      null &&
-                                  _mapScreenStore.selectedSourcePlace != null) {
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  ordered = true;
-                                });
-                              }
-                            });
+                          context: context,
+                          size: _size,
+                          onDestinationPlaceTap: (place) {
+                            final _mapScreenStore = locator<MapScreenStore>();
+                            _mapScreenStore.handleSelectedDestinationPlace(
+                                value: place);
+                            _mapScreenStore.predictedPlaces.clear();
+                            XiamaLogger.debugPrint(
+                                "selected destination ${_mapScreenStore.selectedDestinationPlace}");
+                            if (_mapScreenStore.selectedDestinationPlace !=
+                                    null &&
+                                _mapScreenStore.selectedSourcePlace != null) {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                ordered = true;
+                              });
+                            }
+                          },
+                          onSavedPlaceTap: (place) {},
+                          onSourcePlaceTap: (place) {
+                            final _mapScreenStore = locator<MapScreenStore>();
+                            _mapScreenStore.handleSelectedSourcePlace(
+                                value: place);
+                            _mapScreenStore.predictedPlaces.clear();
+                            XiamaLogger.debugPrint(
+                                "selected source ${_mapScreenStore.selectedSourcePlace}");
+                            if (_mapScreenStore.selectedDestinationPlace !=
+                                    null &&
+                                _mapScreenStore.selectedSourcePlace != null) {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                ordered = true;
+                              });
+                            }
+                          },
+                        );
+                        print("map search bottom sheet");
                         if (ordered) {
                           await Future.delayed(
                               const Duration(milliseconds: 700));
                           if (!mounted) return;
-                          await confirmOrderBottomSheet(
-                              context: context,
-                              size: _size,
-                              currentLocation: _mapScreenStore
-                                  .selectedSourcePlace as PlaceModel,
-                              destinationLocation: _mapScreenStore
-                                  .selectedDestinationPlace as PlaceModel,
-                              onConfirmRide: () async {
-                                Navigator.of(context).pop();
-                                await Future.delayed(
-                                    const Duration(milliseconds: 700));
-                                if (!mounted) return;
-                                Navigator.of(context)
-                                    .pushNamed(ConfirmRideScreen.routeName);
-                              });
+                          final _confirmOrderResult =
+                              await confirmOrderBottomSheet(
+                            context: context,
+                            size: _size,
+                            currentLocation: _mapScreenStore.selectedSourcePlace
+                                as PlaceModel,
+                            destinationLocation: _mapScreenStore
+                                .selectedDestinationPlace as PlaceModel,
+                            onConfirmRide: () async {},
+                          );
                           setState(() {
                             ordered = false;
                           });
-                          return;
+                          print("confirm order bottom sheet");
+
+                          if (_confirmOrderResult == true) {
+                            print("isConfirmOrder true");
+                            await Future.delayed(
+                                const Duration(milliseconds: 700));
+                            if (!mounted) return;
+                            final _confirmRideResult =
+                                await showModalBottomSheet(
+                              context: context,
+                              isDismissible: true,
+                              isScrollControlled: true,
+                              constraints: BoxConstraints(
+                                maxHeight: _size.height,
+                                minHeight: _size.height,
+                              ),
+                              builder: (context) {
+                                return const ConfirmRideScreen();
+                              },
+                            );
+                            print("confirm order bottom sheet close");
+
+                            if (_confirmRideResult == true) {
+                              print("_confirmRideResult true");
+                              if (!mounted) return;
+                              await driverSelectionSheet(
+                                size: _size,
+                                context: context,
+                                actionTapDriver: () async {},
+                                moveDriverArrivingSheetUp: () async {
+                                  setState(() {
+                                    isConfirmOrder = false;
+                                    isDriverWaiting = true;
+                                  });
+                                },
+                              );
+
+                              print("driverArrivingSheet show");
+                              await Future.delayed(
+                                  const Duration(milliseconds: 700));
+                              if (!mounted) return;
+                              await driverArrivingSheet(
+                                context: context,
+                                size: _size,
+                                moveChatScreenPage: () async {
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 700));
+                                  if (!mounted) return;
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    isDriverWaiting = false;
+                                  });
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 700));
+                                  if (!mounted) return;
+                                  Navigator.of(context)
+                                      .pushNamed(ChatScreen.routeName);
+                                },
+                                cancelRide: () async {
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 700));
+                                  if (!mounted) return;
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    isDriverWaiting = false;
+                                  });
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 700));
+                                  if (!mounted) return;
+                                  Navigator.of(context)
+                                      .pushNamed(CancelRideScreen.routeName);
+                                },
+                                movePhoneCallPage: () async {
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 700));
+                                  if (!mounted) return;
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    isDriverWaiting = false;
+                                  });
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 700));
+                                },
+                              );
+                            }
+                          }
                         }
                       },
                       child: Ink(
                         padding: const EdgeInsets.all(10),
                         decoration: const BoxDecoration(
-                          color: XiamaColors.primaryColor,
+                          color: AppColors.primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: const Center(
@@ -148,26 +234,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(
-                  width: XiamaConst.XIAMA_SIZEBOX_PADDING_L,
+                  width: AppConstants.SIZEBOX_PADDING_L,
                 ),
                 PhysicalModel(
-                  color: XiamaColors.grey2,
+                  color: AppColors.grey2,
                   elevation: 10,
                   shape: BoxShape.circle,
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () async {
-                        // TODO delete this line
-                        await driverSelectionSheet(
-                          size: _size,
-                          context: context,
-                        );
-                      },
+                      onTap: () async {},
                       child: Ink(
                         padding: const EdgeInsets.all(10),
                         decoration: const BoxDecoration(
-                          color: XiamaColors.primaryColor,
+                          color: AppColors.primaryColor,
                           shape: BoxShape.circle,
                         ),
                         child: const Center(

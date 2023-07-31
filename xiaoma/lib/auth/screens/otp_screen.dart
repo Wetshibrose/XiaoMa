@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:xiaoma/auth/auth.dart';
-import 'package:xiaoma/constants/constants.dart';
+import 'package:xiaoma/app/constants/constants.dart';
 import 'package:xiaoma/dashboard/screens/dashboard_screen.dart';
-import 'package:xiaoma/themes/themes.dart';
+import 'package:xiaoma/app/themes/themes.dart';
 import 'package:xiaoma/utils/loggings.dart';
 import 'package:xiaoma/widgets/widgets.dart';
 
@@ -33,12 +33,12 @@ class _OtpScreenState extends State<OtpScreen> {
     height: 70,
     textStyle: TextStyle(
       fontSize: 40,
-      color: XiamaColors.black2,
+      color: AppColors.black2,
     ),
     decoration: BoxDecoration(
       border: Border(
         bottom: BorderSide(
-          color: XiamaColors.grey2,
+          color: AppColors.grey2,
           width: 2,
         ),
       ),
@@ -78,11 +78,11 @@ class _OtpScreenState extends State<OtpScreen> {
     final _size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: XiamaColors.white,
+      backgroundColor: AppColors.white,
       body: Container(
         padding: const EdgeInsets.only(
-          left: XiamaConst.XIAMA_SCREEN_PADDING,
-          right: XiamaConst.XIAMA_SCREEN_PADDING,
+          left: AppConstants.XIAMA_SCREEN_PADDING,
+          right: AppConstants.XIAMA_SCREEN_PADDING,
         ),
         height: _size.height,
         constraints: BoxConstraints(
@@ -104,15 +104,15 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
               ),
               Center(
                 child: Image.asset(
-                  XiamaConst.AUTH_OTP_SMS,
+                  AppConstants.AUTH_OTP_SMS,
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_L,
+                height: AppConstants.SIZEBOX_PADDING_L,
               ),
               const Center(
                 child: Text(
@@ -123,19 +123,19 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XXL,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XXL,
               ),
               const Center(
                 child: Text(
                   "Please enter the code we sent via sms",
                   style: TextStyle(
                     fontSize: 16,
-                    color: XiamaColors.grey3,
+                    color: AppColors.grey3,
                   ),
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_L,
+                height: AppConstants.SIZEBOX_PADDING_L,
               ),
               const Center(
                 child: Text(
@@ -146,7 +146,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
               ),
               Center(
                 child: Pinput(
@@ -173,7 +173,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     : const Text(
                         "Send",
                         style: TextStyle(
-                          color: XiamaColors.black1,
+                          color: AppColors.black1,
                         ),
                       ),
               ),
@@ -183,10 +183,10 @@ class _OtpScreenState extends State<OtpScreen> {
                   child: const Text(
                     "Resend code",
                     style: TextStyle(
-                      color: XiamaColors.black2,
+                      color: AppColors.black2,
                       fontSize: 16,
                       decoration: TextDecoration.underline,
-                      decorationColor: XiamaColors.black2,
+                      decorationColor: AppColors.black2,
                       decorationStyle: TextDecorationStyle.solid,
                       decorationThickness: 2.0,
                     ),

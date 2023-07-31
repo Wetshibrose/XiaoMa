@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:xiaoma/auth/auth.dart';
 
-import 'package:xiaoma/constants/constants.dart';
+import 'package:xiaoma/app/constants/constants.dart';
 import 'package:xiaoma/mixins/mixins.dart';
-import 'package:xiaoma/themes/themes.dart';
+import 'package:xiaoma/app/themes/themes.dart';
 import 'package:xiaoma/widgets/widgets.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -62,11 +62,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     final _size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: XiamaColors.white,
+      backgroundColor: AppColors.white,
       body: Container(
         padding: const EdgeInsets.only(
-          left: XiamaConst.XIAMA_SCREEN_PADDING,
-          right: XiamaConst.XIAMA_SCREEN_PADDING,
+          left: AppConstants.XIAMA_SCREEN_PADDING,
+          right: AppConstants.XIAMA_SCREEN_PADDING,
         ),
         height: _size.height,
         constraints: BoxConstraints(
@@ -89,28 +89,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
               ),
               Center(
                 child: Image.asset(
-                  XiamaConst.AUTH_FORGOT_PASSWORD1,
+                  AppConstants.AUTH_FORGOT_PASSWORD1,
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
               ),
               const Center(
                 child: Text(
                   "Please enter the phone number or email\n you used to sign in.",
                   style: TextStyle(
-                    color: XiamaColors.grey3,
+                    color: AppColors.grey3,
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(
-                height: XiamaConst.XIAMA_SIZEBOX_PADDING_XML,
+                height: AppConstants.XIAMA_SIZEBOX_PADDING_XML,
               ),
               Form(
                 key: _formKey,
@@ -129,7 +129,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       },
                     ),
                     const SizedBox(
-                      height: XiamaConst.XIAMA_SIZEBOX_PADDING_MD,
+                      height: AppConstants.SIZEBOX_PADDING_MD,
                     ),
                     Observer(
                       builder: (_) {
@@ -146,7 +146,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           prefixText: "+254",
                           prefixIcon: const Icon(
                             CupertinoIcons.phone,
-                            color: XiamaColors.grey3,
+                            color: AppColors.grey3,
                           ),
                           hintText: "0712345678",
                           onSaved: (newValue) {
@@ -175,7 +175,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     : const Text(
                         "Request password reset",
                         style: TextStyle(
-                          color: XiamaColors.black1,
+                          color: AppColors.black1,
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
