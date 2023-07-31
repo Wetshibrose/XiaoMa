@@ -25,6 +25,22 @@ mixin _$PromoCodeStore on _PromoCodeStore, Store {
     });
   }
 
+  late final _$currentCodeIndexAtom =
+      Atom(name: '_PromoCodeStore.currentCodeIndex', context: context);
+
+  @override
+  int? get currentCodeIndex {
+    _$currentCodeIndexAtom.reportRead();
+    return super.currentCodeIndex;
+  }
+
+  @override
+  set currentCodeIndex(int? value) {
+    _$currentCodeIndexAtom.reportWrite(value, super.currentCodeIndex, () {
+      super.currentCodeIndex = value;
+    });
+  }
+
   late final _$_PromoCodeStoreActionController =
       ActionController(name: '_PromoCodeStore', context: context);
 
@@ -40,9 +56,21 @@ mixin _$PromoCodeStore on _PromoCodeStore, Store {
   }
 
   @override
+  void changeCurrentCodeIndex({required int value}) {
+    final _$actionInfo = _$_PromoCodeStoreActionController.startAction(
+        name: '_PromoCodeStore.changeCurrentCodeIndex');
+    try {
+      return super.changeCurrentCodeIndex(value: value);
+    } finally {
+      _$_PromoCodeStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-screenTitle: ${screenTitle}
+screenTitle: ${screenTitle},
+currentCodeIndex: ${currentCodeIndex}
     ''';
   }
 }
